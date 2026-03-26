@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class EmergencyContact {
+final class EmergencyContact: Identifiable {
     var id: UUID
     var name: String
     var relationship: String

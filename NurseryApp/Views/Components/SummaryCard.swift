@@ -6,18 +6,17 @@ struct SummaryCard: View {
     let systemImage: String
 
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 14) {
             Image(systemName: systemImage)
-                .font(.title2)
+                .font(.title3)
                 .foregroundStyle(AppTheme.primary)
-                .frame(width: 50, height: 50)
+                .frame(width: 44, height: 44)
                 .background(AppTheme.softBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.headline)
-                    .foregroundStyle(.primary)
 
                 Text(subtitle)
                     .font(.subheadline)
@@ -29,8 +28,11 @@ struct SummaryCard: View {
         }
         .padding()
         .background(AppTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(AppTheme.border, lineWidth: 1)
+        )
+        .shadow(color: AppTheme.shadow, radius: 5, x: 0, y: 3)
     }
 }
-

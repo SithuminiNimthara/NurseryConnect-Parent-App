@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class AuthorisedCollector {
+final class AuthorisedCollector: Identifiable {
     var id: UUID
     var name: String
     var relationship: String

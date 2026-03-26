@@ -4,145 +4,139 @@ import SwiftData
 struct DashboardView: View {
     @Environment(\.modelContext) private var context
     @Query private var profiles: [ChildProfile]
-    @Query(sort: \DiaryEntry.timestamp, order: .reverse) private var diaryEntries: [DiaryEntry]
+    @Query(sort: \DiaryEntry.timestamp, order: .reverse) private var entries: [DiaryEntry]
+
+    @State private var animateContent = false
 
     var body: some View {
         NavigationStack {
-            Group {
-                if let child = profiles.first {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
-                            dashboardHeader(for: child)
-
-                            SectionHeaderView(
-                                "Today at Nursery",
-                                subtitle: "A quick summary of your child’s updates"
-                            )
-
-                            SummaryCard(
-                                title: "Daily Diary",
-                                subtitle: "\(diaryEntries.count) updates available today",
-                                systemImage: "book.closed.fill"
-                            )
-
-                            SummaryCard(
-                                title: "Dietary Information",
-                                subtitle: child.dietaryNotes.isEmpty ? "No dietary notes available" : child.dietaryNotes,
-                                systemImage: "fork.knife"
-                            )
-
-                            SummaryCard(
-                                title: "Medical Information",
-                                subtitle: child.medicalNotes.isEmpty ? "No medical notes available" : child.medicalNotes,
-                                systemImage: "cross.case.fill"
-                            )
-
-                            SectionHeaderView(
-                                "Quick Actions",
-                                subtitle: "Manage your child’s information and view updates"
-                            )
-
-                            VStack(spacing: 14) {
-                                NavigationLink {
-                                    DiaryListView()
-                                } label: {
-                                    actionButtonLabel(
-                                        title: "View Daily Diary",
-                                        subtitle: "See meals, naps, activities and more",
-                                        icon: "list.bullet.rectangle.portrait.fill"
-                                    )
-                                }
-
-                                NavigationLink {
-                                    ProfileView()
-                                } label: {
-                                    actionButtonLabel(
-                                        title: "Manage Profile",
-                                        subtitle: "Update profile details and consent settings",
-                                        icon: "person.text.rectangle.fill"
-                                    )
-                                }
-                            }
-                        }
-                        .padding()
-                    }
-                    .background(AppTheme.background)
-                } else {
-                    ContentUnavailableView(
-                        "No Child Profile Found",
-                        systemImage: "person.crop.circle.badge.exclamationmark",
-                        description: Text("Please check your saved data.")
-                    )
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    headerCard
+                    todaySection
+                    quickActionsSection
                 }
+                .padding()
+                .opacity(animateContent ? 1 : 0)
+                .offset(y: animateContent ? 0 : 16)
+                .animation(.easeOut(duration: 0.45), value: animateContent)
             }
+            .background(AppTheme.background)
             .navigationTitle("NurseryConnect")
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                SampleData.insertIfNeeded(context: context)
+            .task {
+                SampleData.seedIfNeeded(context: context, profiles: profiles, entries: entries)
+                animateContent = true
             }
         }
-        .tint(AppTheme.primary)
     }
 
-    @ViewBuilder
-    private func dashboardHeader(for child: ChildProfile) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Welcome Back")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+    private var child: ChildProfile? {
+        profiles.first
+    }
 
-            Text(child.preferredName)
-                .font(.largeTitle)
-                .fontWeight(.bold)
+    private var latestDiaryCountText: String {
+        let count = entries.count
+        return count == 1 ? "1 update today" : "\(count) updates today"
+    }
 
-            Text("Parent / Guardian Dashboard")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+    private var headerCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Welcome back")
+                .font(.headline)
+                .foregroundStyle(AppTheme.primary)
+
+            if let child {
+                HStack(spacing: 14) {
+                    if let photoName = child.photoName, !photoName.isEmpty {
+                        Image(photoName)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 58, height: 58)
+                            .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.crop.circle")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 46, height: 46)
+                            .foregroundStyle(AppTheme.primary)
+                            .frame(width: 58, height: 58)
+                            .background(Color.white.opacity(0.55))
+                            .clipShape(Circle())
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(child.preferredName)
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.primary)
+
+                        Text("Parent / Guardian Dashboard")
+                            .font(.subheadline)
+                            .foregroundStyle(.primary.opacity(0.75))
+                    }
+
+                    Spacer()
+                }
+            } else {
+                Text("No child profile available")
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            LinearGradient(
-                colors: [
-                    AppTheme.primary.opacity(0.20),
-                    AppTheme.accent.opacity(0.10)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(AppTheme.secondary.opacity(0.75))
         .clipShape(RoundedRectangle(cornerRadius: 22))
     }
 
-    @ViewBuilder
-    private func actionButtonLabel(title: String, subtitle: String, icon: String) -> some View {
-        HStack(spacing: 14) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundStyle(.white)
-                .frame(width: 50, height: 50)
-                .background(AppTheme.primary)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+    private var todaySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeaderView("Today at Nursery")
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
+            SummaryCard(
+                title: "Daily Diary",
+                subtitle: latestDiaryCountText,
+                systemImage: "book.closed"
+            )
 
-                Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
+            SummaryCard(
+                title: "Dietary Info",
+                subtitle: child?.dietaryNotes.isEmpty == false ? child?.dietaryNotes ?? "" : "No dietary notes recorded",
+                systemImage: "fork.knife"
+            )
 
-            Spacer()
-
-            Image(systemName: "chevron.right")
-                .foregroundStyle(.secondary)
+            SummaryCard(
+                title: "Medical Info",
+                subtitle: child?.medicalNotes.isEmpty == false ? child?.medicalNotes ?? "" : "No medical notes recorded",
+                systemImage: "cross.case"
+            )
         }
-        .padding()
-        .background(AppTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+    }
+
+    private var quickActionsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeaderView("Quick Actions")
+
+            NavigationLink {
+                DiaryListView()
+            } label: {
+                PrimaryActionCard(
+                    title: "View Daily Diary",
+                    subtitle: "Meals, naps, activities",
+                    systemImage: "doc.text.image"
+                )
+            }
+            .buttonStyle(.plain)
+
+            NavigationLink {
+                ProfileView()
+            } label: {
+                PrimaryActionCard(
+                    title: "Manage Profile",
+                    subtitle: "Profile & consent",
+                    systemImage: "person.crop.circle.badge.checkmark"
+                )
+            }
+            .buttonStyle(.plain)
+        }
     }
 }
-

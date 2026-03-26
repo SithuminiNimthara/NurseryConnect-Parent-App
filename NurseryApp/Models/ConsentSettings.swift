@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class ConsentSettings {
+final class ConsentSettings: Identifiable {
     var id: UUID
     var photographyConsent: Bool
     var socialMediaConsent: Bool

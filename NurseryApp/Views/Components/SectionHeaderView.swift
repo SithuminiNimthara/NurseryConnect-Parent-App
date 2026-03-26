@@ -12,8 +12,7 @@ struct SectionHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.title3)
-                .fontWeight(.semibold)
+                .font(.headline)
                 .foregroundStyle(AppTheme.primary)
 
             if let subtitle = subtitle {
@@ -25,4 +24,3 @@ struct SectionHeaderView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
-

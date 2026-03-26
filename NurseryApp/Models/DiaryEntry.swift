@@ -11,23 +11,32 @@ enum DiaryEntryType: String, Codable, CaseIterable {
 }
 
 @Model
-final class DiaryEntry {
+final class DiaryEntry: Identifiable {
     var id: UUID
     var title: String
     var details: String
     var timestamp: Date
     var typeRawValue: String
+    var photoName: String?
 
     var type: DiaryEntryType {
         get { DiaryEntryType(rawValue: typeRawValue) ?? .activity }
         set { typeRawValue = newValue.rawValue }
     }
 
-    init(id: UUID = UUID(), title: String, details: String, timestamp: Date, type: DiaryEntryType) {
+    init(
+        id: UUID = UUID(),
+        title: String,
+        details: String,
+        timestamp: Date,
+        type: DiaryEntryType,
+        photoName: String? = nil
+    ) {
         self.id = id
         self.title = title
         self.details = details
         self.timestamp = timestamp
         self.typeRawValue = type.rawValue
+        self.photoName = photoName
     }
 }
