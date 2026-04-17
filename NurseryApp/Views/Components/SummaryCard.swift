@@ -10,11 +10,11 @@ struct SummaryCard: View {
             Image(systemName: systemImage)
                 .font(.title3)
                 .foregroundStyle(AppTheme.primary)
-                .frame(width: 44, height: 44)
+                .frame(width: 48, height: 48)
                 .background(AppTheme.softBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.headline)
 
@@ -26,13 +26,13 @@ struct SummaryCard: View {
 
             Spacer()
         }
-        .padding()
+        .padding(18)
         .background(AppTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 22))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 22)
                 .stroke(AppTheme.border, lineWidth: 1)
         )
-        .shadow(color: AppTheme.shadow, radius: 5, x: 0, y: 3)
+        .shadow(color: AppTheme.shadow, radius: 10, x: 0, y: 4)
     }
 }

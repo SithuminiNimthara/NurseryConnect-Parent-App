@@ -3,16 +3,17 @@ import SwiftData
 
 struct DiaryListView: View {
     @Query(sort: \DiaryEntry.timestamp, order: .reverse) private var entries: [DiaryEntry]
-    @State private var selectedFilter: DiaryEntryType?
+    @StateObject private var viewModel = DiaryViewModel()
+    @State private var animateCards = false
 
     private var filteredEntries: [DiaryEntry] {
-        guard let selectedFilter else { return entries }
-        return entries.filter { $0.type == selectedFilter }
+        viewModel.filteredEntries(from: entries)
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                headerSection
                 filterScrollView
 
                 if filteredEntries.isEmpty {
@@ -25,13 +26,20 @@ struct DiaryListView: View {
                     .padding(.top, 40)
                 } else {
                     LazyVStack(spacing: 12) {
-                        ForEach(filteredEntries) { entry in
+                        ForEach(Array(filteredEntries.enumerated()), id: \.element.id) { index, entry in
                             NavigationLink {
                                 DiaryDetailView(entry: entry)
                             } label: {
                                 DiaryRowCard(entry: entry)
+                                    .opacity(animateCards ? 1 : 0)
+                                    .offset(y: animateCards ? 0 : 12)
+                                    .animation(
+                                        .easeOut(duration: 0.3).delay(Double(index) * 0.04),
+                                        value: animateCards
+                                    )
                             }
                             .buttonStyle(.plain)
+                            .accessibilityIdentifier("diaryEntry_\(entry.title)")
                         }
                     }
                 }
@@ -43,18 +51,39 @@ struct DiaryListView: View {
         .background(AppTheme.background)
         .navigationTitle("Daily Diary")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            animateCards = true
+        }
+        .onChange(of: viewModel.selectedFilter) { _, _ in
+            animateCards = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                animateCards = true
+            }
+        }
+    }
+
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Daily Updates")
+                .font(.title3.bold())
+
+            Text(viewModel.entryCountText(for: filteredEntries))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var filterScrollView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
-                filterChip(title: "All", isSelected: selectedFilter == nil) {
-                    selectedFilter = nil
+                filterChip(title: "All", isSelected: viewModel.selectedFilter == nil) {
+                    viewModel.selectedFilter = nil
                 }
 
                 ForEach(DiaryEntryType.allCases, id: \.self) { type in
-                    filterChip(title: type.rawValue, isSelected: selectedFilter == type) {
-                        selectedFilter = type
+                    filterChip(title: type.rawValue, isSelected: viewModel.selectedFilter == type) {
+                        viewModel.selectedFilter = type
                     }
                 }
             }

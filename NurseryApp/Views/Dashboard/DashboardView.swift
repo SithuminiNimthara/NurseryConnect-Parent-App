@@ -35,57 +35,99 @@ struct DashboardView: View {
         profiles.first
     }
 
+    private var latestEntry: DiaryEntry? {
+        entries.first
+    }
+
     private var latestDiaryCountText: String {
-        let count = entries.count
-        return count == 1 ? "1 update today" : "\(count) updates today"
+        switch entries.count {
+        case 0:
+            return "No updates yet today"
+        case 1:
+            return "1 update available today"
+        default:
+            return "\(entries.count) updates available today"
+        }
     }
 
     private var headerCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Welcome back")
-                .font(.headline)
-                .foregroundStyle(AppTheme.primary)
+        ZStack(alignment: .topTrailing) {
+            RoundedRectangle(cornerRadius: 28)
+                .fill(
+                    LinearGradient(
+                        colors: [AppTheme.secondary, AppTheme.peach],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
 
-            if let child {
-                HStack(spacing: 14) {
-                    if let photoName = child.photoName, !photoName.isEmpty {
-                        Image(photoName)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 58, height: 58)
-                            .clipShape(Circle())
-                    } else {
-                        Image(systemName: "person.crop.circle")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 46, height: 46)
-                            .foregroundStyle(AppTheme.primary)
-                            .frame(width: 58, height: 58)
-                            .background(Color.white.opacity(0.55))
-                            .clipShape(Circle())
+            Circle()
+                .fill(AppTheme.accent.opacity(0.18))
+                .frame(width: 120, height: 120)
+                .offset(x: 30, y: -30)
+
+            VStack(alignment: .leading, spacing: 18) {
+                Text("Welcome back")
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primary)
+
+                if let child {
+                    HStack(spacing: 14) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.white.opacity(0.9))
+                                .frame(width: 64, height: 64)
+
+                            if let photoName = child.photoName, !photoName.isEmpty {
+                                Image(photoName)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 58, height: 58)
+                                    .clipShape(Circle())
+                            } else {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 34, height: 34)
+                                    .foregroundStyle(AppTheme.primary)
+                            }
+                        }
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(child.preferredName)
+                                .font(.title2.bold())
+
+                            Text("Parent / Guardian Dashboard")
+                                .font(.subheadline)
+                                .foregroundStyle(AppTheme.mutedText)
+                        }
+
+                        Spacer()
                     }
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(child.preferredName)
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.primary)
-
-                        Text("Parent / Guardian Dashboard")
-                            .font(.subheadline)
-                            .foregroundStyle(.primary.opacity(0.75))
+                    HStack(spacing: 10) {
+                        smallBadge("Diary Updates")
+                        smallBadge("Profile Ready")
                     }
-
-                    Spacer()
+                } else {
+                    Text("No child profile available")
+                        .foregroundStyle(.secondary)
                 }
-            } else {
-                Text("No child profile available")
-                    .foregroundStyle(.secondary)
             }
+            .padding(20)
         }
-        .padding()
-        .background(AppTheme.secondary.opacity(0.75))
-        .clipShape(RoundedRectangle(cornerRadius: 22))
+        .frame(maxWidth: .infinity)
+        .frame(height: 185)
+        .shadow(color: AppTheme.shadow, radius: 12, x: 0, y: 6)
+    }
+
+    private func smallBadge(_ text: String) -> some View {
+        Text(text)
+            .font(.caption.weight(.semibold))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
+            .background(Color.white.opacity(0.8))
+            .clipShape(Capsule())
     }
 
     private var todaySection: some View {
@@ -97,6 +139,14 @@ struct DashboardView: View {
                 subtitle: latestDiaryCountText,
                 systemImage: "book.closed"
             )
+
+            if let latestEntry {
+                SummaryCard(
+                    title: "Latest Update",
+                    subtitle: latestEntry.title,
+                    systemImage: "clock.arrow.circlepath"
+                )
+            }
 
             SummaryCard(
                 title: "Dietary Info",
@@ -122,7 +172,8 @@ struct DashboardView: View {
                 PrimaryActionCard(
                     title: "View Daily Diary",
                     subtitle: "Meals, naps, activities",
-                    systemImage: "doc.text.image"
+                    systemImage: "doc.text.image",
+                    accessibilityID: "diaryButton"
                 )
             }
             .buttonStyle(.plain)
@@ -133,7 +184,8 @@ struct DashboardView: View {
                 PrimaryActionCard(
                     title: "Manage Profile",
                     subtitle: "Profile & consent",
-                    systemImage: "person.crop.circle.badge.checkmark"
+                    systemImage: "person.crop.circle.badge.checkmark",
+                    accessibilityID: "profileButton"
                 )
             }
             .buttonStyle(.plain)

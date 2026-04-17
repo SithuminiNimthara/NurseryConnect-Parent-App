@@ -12,13 +12,18 @@ final class FormValidationTests: XCTestCase {
         XCTAssertFalse(FormValidation.isNotBlank("   "))
     }
 
-    func testPhoneValidationAcceptsTenDigitsOrMore() {
+    func testTrimmedRemovesSpaces() {
+        XCTAssertEqual(FormValidation.trimmed("  Hello  "), "Hello")
+    }
+
+    func testPhoneValidationAcceptsValidNumbers() {
         XCTAssertTrue(FormValidation.isValidPhone("0771234567"))
         XCTAssertTrue(FormValidation.isValidPhone("+94 77 123 4567"))
     }
 
-    func testPhoneValidationRejectsShortNumbers() {
+    func testPhoneValidationRejectsInvalidNumbers() {
         XCTAssertFalse(FormValidation.isValidPhone("123"))
         XCTAssertFalse(FormValidation.isValidPhone(""))
+        XCTAssertFalse(FormValidation.isValidPhone("12345678901234567890"))
     }
 }

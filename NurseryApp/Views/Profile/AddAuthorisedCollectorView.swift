@@ -13,6 +13,7 @@ struct AddAuthorisedCollectorView: View {
 
     @State private var errorMessage = ""
     @State private var showError = false
+    @State private var showSuccess = false
 
     private var trimmedName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var trimmedRelationship: String { relationship.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -42,16 +43,21 @@ struct AddAuthorisedCollectorView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                Button("Cancel") {
-                    dismiss()
-                }
+                Button("Cancel") { dismiss() }
             }
 
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Save") {
+                Button {
                     saveCollector()
+                } label: {
+                    Text("Save")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(isValid ? AppTheme.primary : Color.gray.opacity(0.35))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
-                .foregroundStyle(AppTheme.primary)
                 .disabled(!isValid)
             }
         }
@@ -59,6 +65,13 @@ struct AddAuthorisedCollectorView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(errorMessage)
+        }
+        .alert("Collector Added", isPresented: $showSuccess) {
+            Button("OK") {
+                dismiss()
+            }
+        } message: {
+            Text("The authorised collector was saved successfully.")
         }
     }
 
@@ -89,7 +102,7 @@ struct AddAuthorisedCollectorView: View {
 
         do {
             try context.save()
-            dismiss()
+            showSuccess = true
         } catch {
             showValidationError("Failed to save the authorised collector.")
         }

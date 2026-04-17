@@ -46,8 +46,17 @@ struct EditEmergencyContactView: View {
             }
 
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Save") {
+                Button {
                     saveContact()
+                } label: {
+                    Text("Save")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(isValid ? AppTheme.primary : Color.gray.opacity(0.35))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .animation(.easeInOut(duration: 0.2), value: isValid)
                 }
                 .disabled(!isValid)
             }

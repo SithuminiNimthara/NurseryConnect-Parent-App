@@ -12,15 +12,16 @@ struct SectionHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.headline)
-                .foregroundStyle(AppTheme.primary)
+                .font(.title3.bold())
+                .foregroundStyle(.primary)
 
             if let subtitle = subtitle {
                 Text(subtitle)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppTheme.mutedText)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 4)
     }
 }

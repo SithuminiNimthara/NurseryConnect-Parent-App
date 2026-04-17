@@ -4,39 +4,50 @@ struct PrimaryActionCard: View {
     let title: String
     let subtitle: String
     let systemImage: String
+    var accessibilityID: String? = nil
 
     var body: some View {
-        HStack(spacing: 14) {
-            Image(systemName: systemImage)
-                .font(.title3)
-                .foregroundStyle(.white)
-                .frame(width: 48, height: 48)
-                .background(AppTheme.primary)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+        HStack(spacing: 16) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(AppTheme.primary)
 
-            VStack(alignment: .leading, spacing: 4) {
+                Image(systemName: systemImage)
+                    .font(.title3)
+                    .foregroundStyle(.white)
+            }
+            .frame(width: 54, height: 54)
+
+            VStack(alignment: .leading, spacing: 5) {
                 Text(title)
                     .font(.headline)
-                    .foregroundStyle(.primary)
 
                 Text(subtitle)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppTheme.mutedText)
             }
 
             Spacer()
 
-            Image(systemName: "chevron.right")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(.secondary)
+            ZStack {
+                Circle()
+                    .fill(AppTheme.softBackground)
+                    .frame(width: 34, height: 34)
+
+                Image(systemName: "arrow.right")
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(AppTheme.primary)
+            }
         }
-        .padding()
-        .background(AppTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(18)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 22))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 22)
                 .stroke(AppTheme.border, lineWidth: 1)
         )
-        .shadow(color: AppTheme.shadow, radius: 5, x: 0, y: 3)
+        .shadow(color: AppTheme.shadow, radius: 10, x: 0, y: 5)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(accessibilityID ?? "")
     }
 }

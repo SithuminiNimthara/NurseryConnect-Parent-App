@@ -39,14 +39,31 @@ struct DiaryRowCard: View {
             Image(photoName)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 52, height: 52)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .frame(width: 56, height: 56)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
         } else {
             Image(systemName: icon(for: entry.type))
                 .foregroundStyle(AppTheme.primary)
-                .frame(width: 52, height: 52)
-                .background(AppTheme.softBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .frame(width: 56, height: 56)
+                .background(backgroundColor(for: entry.type))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+        }
+    }
+
+    private func backgroundColor(for type: DiaryEntryType) -> Color {
+        switch type {
+        case .meal:
+            return AppTheme.peach
+        case .nap:
+            return AppTheme.lilac
+        case .activity:
+            return AppTheme.lemon
+        case .mood:
+            return AppTheme.sky
+        case .checkIn:
+            return AppTheme.secondary
+        case .checkOut:
+            return AppTheme.softBackground
         }
     }
 

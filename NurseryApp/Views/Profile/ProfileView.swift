@@ -35,6 +35,7 @@ struct ProfileView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Dietary Notes")
                                         .font(.subheadline.weight(.semibold))
+
                                     Text(child.dietaryNotes.isEmpty ? "Not provided" : child.dietaryNotes)
                                         .font(.subheadline)
                                         .foregroundStyle(.secondary)
@@ -45,6 +46,7 @@ struct ProfileView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Medical Notes")
                                         .font(.subheadline.weight(.semibold))
+
                                     Text(child.medicalNotes.isEmpty ? "Not provided" : child.medicalNotes)
                                         .font(.subheadline)
                                         .foregroundStyle(.secondary)
@@ -72,12 +74,29 @@ struct ProfileView: View {
                                 )
                             } else {
                                 ForEach(child.emergencyContacts) { contact in
-                                    ContactRowCard(
-                                        name: contact.name,
-                                        subtitle: contact.relationship,
-                                        trailingText: contact.phoneNumber
-                                    )
+                                    HStack(spacing: 12) {
+                                        ContactRowCard(
+                                            name: contact.name,
+                                            subtitle: contact.relationship,
+                                            trailingText: contact.phoneNumber
+                                        )
+
+                                        Spacer()
+
+                                        Button {
+                                            selectedEmergencyContact = contact
+                                        } label: {
+                                            Image(systemName: "pencil")
+                                                .font(.headline)
+                                                .foregroundStyle(AppTheme.primary)
+                                                .frame(width: 36, height: 36)
+                                                .background(AppTheme.softBackground)
+                                                .clipShape(Circle())
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                     .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
                                     .background(AppTheme.cardBackground)
                                     .clipShape(RoundedRectangle(cornerRadius: 16))
                                     .overlay(
@@ -90,7 +109,7 @@ struct ProfileView: View {
                                         } label: {
                                             Label("Edit", systemImage: "pencil")
                                         }
-                                        .tint(.green)
+                                        .tint(.blue)
 
                                         Button(role: .destructive) {
                                             contactToDelete = contact
@@ -109,6 +128,7 @@ struct ProfileView: View {
                                     .foregroundStyle(AppTheme.primary)
                             }
                             .padding(.top, 4)
+                            .accessibilityIdentifier("addContactButton")
                         }
                     }
                     .listRowBackground(Color.clear)
@@ -124,12 +144,29 @@ struct ProfileView: View {
                                 )
                             } else {
                                 ForEach(child.authorisedCollectors) { collector in
-                                    ContactRowCard(
-                                        name: collector.name,
-                                        subtitle: collector.relationship,
-                                        trailingText: "ID: \(collector.idReference)"
-                                    )
+                                    HStack(spacing: 12) {
+                                        ContactRowCard(
+                                            name: collector.name,
+                                            subtitle: collector.relationship,
+                                            trailingText: "ID: \(collector.idReference)"
+                                        )
+
+                                        Spacer()
+
+                                        Button {
+                                            selectedCollector = collector
+                                        } label: {
+                                            Image(systemName: "pencil")
+                                                .font(.headline)
+                                                .foregroundStyle(AppTheme.primary)
+                                                .frame(width: 36, height: 36)
+                                                .background(AppTheme.softBackground)
+                                                .clipShape(Circle())
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                     .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
                                     .background(AppTheme.cardBackground)
                                     .clipShape(RoundedRectangle(cornerRadius: 16))
                                     .overlay(
@@ -142,7 +179,7 @@ struct ProfileView: View {
                                         } label: {
                                             Label("Edit", systemImage: "pencil")
                                         }
-                                        .tint(.green)
+                                        .tint(.blue)
 
                                         Button(role: .destructive) {
                                             collectorToDelete = collector
@@ -161,6 +198,7 @@ struct ProfileView: View {
                                     .foregroundStyle(AppTheme.primary)
                             }
                             .padding(.top, 4)
+                            .accessibilityIdentifier("addCollectorButton")
                         }
                     }
                     .listRowBackground(Color.clear)
@@ -256,6 +294,7 @@ struct ProfileView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
+
             Text(message)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)

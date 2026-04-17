@@ -13,6 +13,7 @@ struct AddEmergencyContactView: View {
 
     @State private var errorMessage = ""
     @State private var showError = false
+    @State private var showSuccess = false
 
     private var trimmedName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var trimmedRelationship: String { relationship.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -43,23 +44,36 @@ struct AddEmergencyContactView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                Button("Cancel") {
-                    dismiss()
-                }
+                Button("Cancel") { dismiss() }
             }
 
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Save") {
+                Button {
                     saveContact()
+                } label: {
+                    Text("Save")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(isValid ? AppTheme.primary : Color.gray.opacity(0.35))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
-                .foregroundStyle(AppTheme.primary)
                 .disabled(!isValid)
+                .accessibilityIdentifier("saveButton")
             }
         }
         .alert("Check Your Input", isPresented: $showError) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(errorMessage)
+        }
+        .alert("Contact Added", isPresented: $showSuccess) {
+            Button("OK") {
+                dismiss()
+            }
+        } message: {
+            Text("The emergency contact was saved successfully.")
         }
     }
 
@@ -74,14 +88,7 @@ struct AddEmergencyContactView: View {
             return
         }
 
-        let digitsOnly = trimmedPhone.filter(\.isNumber)
-
-        guard !digitsOnly.isEmpty else {
-            showValidationError("Please enter a valid phone number.")
-            return
-        }
-
-        guard digitsOnly.count >= 7 && digitsOnly.count <= 15 else {
+        guard FormValidation.isValidPhone(trimmedPhone) else {
             showValidationError("Phone number should contain 7 to 15 digits.")
             return
         }
@@ -97,7 +104,7 @@ struct AddEmergencyContactView: View {
 
         do {
             try context.save()
-            dismiss()
+            showSuccess = true
         } catch {
             showValidationError("Failed to save the emergency contact.")
         }
