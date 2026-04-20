@@ -23,7 +23,7 @@ struct ProfileView: View {
                 List {
                     Section {
                         ProfileHeaderCard(child: child)
-                            .listRowInsets(EdgeInsets())
+                            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
                             .listRowBackground(Color.clear)
                     }
 
@@ -64,144 +64,134 @@ struct ProfileView: View {
                     .listRowBackground(Color.clear)
 
                     Section {
-                        VStack(alignment: .leading, spacing: 10) {
-                            SectionHeaderView("Emergency Contacts")
+                        SectionHeaderView("Emergency Contacts")
+                            .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
+                            .listRowBackground(Color.clear)
 
-                            if child.emergencyContacts.isEmpty {
-                                emptyStateCard(
-                                    title: "No emergency contacts",
-                                    message: "Add at least one emergency contact for safeguarding."
+                        if child.emergencyContacts.isEmpty {
+                            emptyStateCard(
+                                title: "No emergency contacts",
+                                message: "Add at least one emergency contact for safeguarding."
+                            )
+                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                            .listRowBackground(Color.clear)
+                        } else {
+                            ForEach(child.emergencyContacts) { contact in
+                                ContactRowCard(
+                                    name: contact.name,
+                                    subtitle: contact.relationship,
+                                    trailingText: contact.phoneNumber
                                 )
-                            } else {
-                                ForEach(child.emergencyContacts) { contact in
-                                    HStack(spacing: 12) {
-                                        ContactRowCard(
-                                            name: contact.name,
-                                            subtitle: contact.relationship,
-                                            trailingText: contact.phoneNumber
-                                        )
-
-                                        Spacer()
-
-                                        Button {
-                                            selectedEmergencyContact = contact
-                                        } label: {
-                                            Image(systemName: "pencil")
-                                                .font(.headline)
-                                                .foregroundStyle(AppTheme.primary)
-                                                .frame(width: 36, height: 36)
-                                                .background(AppTheme.softBackground)
-                                                .clipShape(Circle())
-                                        }
-                                        .buttonStyle(.plain)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(AppTheme.cardBackground)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(AppTheme.border, lineWidth: 1)
+                                )
+                                .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
+                                .listRowBackground(Color.clear)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button(role: .destructive) {
+                                        contactToDelete = contact
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
                                     }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(AppTheme.cardBackground)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .stroke(AppTheme.border, lineWidth: 1)
-                                    )
-                                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                        Button {
-                                            selectedEmergencyContact = contact
-                                        } label: {
-                                            Label("Edit", systemImage: "pencil")
-                                        }
-                                        .tint(.blue)
 
-                                        Button(role: .destructive) {
-                                            contactToDelete = contact
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
+                                    Button {
+                                        selectedEmergencyContact = contact
+                                    } label: {
+                                        Label("Edit", systemImage: "pencil")
                                     }
+                                    .tint(AppTheme.primary)
                                 }
                             }
 
-                            Button {
-                                showAddEmergencyContact = true
-                            } label: {
-                                Label("Add Emergency Contact", systemImage: "plus")
-                                    .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(AppTheme.primary)
-                            }
-                            .padding(.top, 4)
-                            .accessibilityIdentifier("addContactButton")
+                            Text("← Swipe left on a contact to edit or delete")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .padding(.top, 2)
+                                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 4, trailing: 0))
+                                .listRowBackground(Color.clear)
                         }
+
+                        Button {
+                            showAddEmergencyContact = true
+                        } label: {
+                            Label("Add Emergency Contact", systemImage: "plus")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(AppTheme.primary)
+                        }
+                        .padding(.top, 4)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
+                        .listRowBackground(Color.clear)
                     }
-                    .listRowBackground(Color.clear)
 
                     Section {
-                        VStack(alignment: .leading, spacing: 10) {
-                            SectionHeaderView("Authorised Collectors")
+                        SectionHeaderView("Authorised Collectors")
+                            .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
+                            .listRowBackground(Color.clear)
 
-                            if child.authorisedCollectors.isEmpty {
-                                emptyStateCard(
-                                    title: "No authorised collectors",
-                                    message: "Add approved adults who are allowed to collect the child."
+                        if child.authorisedCollectors.isEmpty {
+                            emptyStateCard(
+                                title: "No authorised collectors",
+                                message: "Add approved adults who are allowed to collect the child."
+                            )
+                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                            .listRowBackground(Color.clear)
+                        } else {
+                            ForEach(child.authorisedCollectors) { collector in
+                                ContactRowCard(
+                                    name: collector.name,
+                                    subtitle: collector.relationship,
+                                    trailingText: "ID: \(collector.idReference)"
                                 )
-                            } else {
-                                ForEach(child.authorisedCollectors) { collector in
-                                    HStack(spacing: 12) {
-                                        ContactRowCard(
-                                            name: collector.name,
-                                            subtitle: collector.relationship,
-                                            trailingText: "ID: \(collector.idReference)"
-                                        )
-
-                                        Spacer()
-
-                                        Button {
-                                            selectedCollector = collector
-                                        } label: {
-                                            Image(systemName: "pencil")
-                                                .font(.headline)
-                                                .foregroundStyle(AppTheme.primary)
-                                                .frame(width: 36, height: 36)
-                                                .background(AppTheme.softBackground)
-                                                .clipShape(Circle())
-                                        }
-                                        .buttonStyle(.plain)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(AppTheme.cardBackground)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(AppTheme.border, lineWidth: 1)
+                                )
+                                .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
+                                .listRowBackground(Color.clear)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button(role: .destructive) {
+                                        collectorToDelete = collector
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
                                     }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(AppTheme.cardBackground)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .stroke(AppTheme.border, lineWidth: 1)
-                                    )
-                                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                        Button {
-                                            selectedCollector = collector
-                                        } label: {
-                                            Label("Edit", systemImage: "pencil")
-                                        }
-                                        .tint(.blue)
 
-                                        Button(role: .destructive) {
-                                            collectorToDelete = collector
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
+                                    Button {
+                                        selectedCollector = collector
+                                    } label: {
+                                        Label("Edit", systemImage: "pencil")
                                     }
+                                    .tint(AppTheme.primary)
                                 }
                             }
 
-                            Button {
-                                showAddCollector = true
-                            } label: {
-                                Label("Add Authorised Collector", systemImage: "plus")
-                                    .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(AppTheme.primary)
-                            }
-                            .padding(.top, 4)
-                            .accessibilityIdentifier("addCollectorButton")
+                            Text("← Swipe left on a collector to edit or delete")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .padding(.top, 2)
+                                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 4, trailing: 0))
+                                .listRowBackground(Color.clear)
                         }
+
+                        Button {
+                            showAddCollector = true
+                        } label: {
+                            Label("Add Authorised Collector", systemImage: "plus")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(AppTheme.primary)
+                        }
+                        .padding(.top, 4)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
+                        .listRowBackground(Color.clear)
                     }
-                    .listRowBackground(Color.clear)
 
                     Section {
                         NavigationLink("Edit Profile") {

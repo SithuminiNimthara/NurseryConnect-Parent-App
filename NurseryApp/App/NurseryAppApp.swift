@@ -5,7 +5,7 @@ import SwiftData
 struct NurseryAppApp: App {
     var body: some Scene {
         WindowGroup {
-            DashboardView()
+            MainTabView()
                 .tint(AppTheme.primary)
         }
         .modelContainer(for: [

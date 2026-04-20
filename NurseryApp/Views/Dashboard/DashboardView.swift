@@ -9,25 +9,23 @@ struct DashboardView: View {
     @State private var animateContent = false
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    headerCard
-                    todaySection
-                    quickActionsSection
-                }
-                .padding()
-                .opacity(animateContent ? 1 : 0)
-                .offset(y: animateContent ? 0 : 16)
-                .animation(.easeOut(duration: 0.45), value: animateContent)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                headerCard
+                todaySection
+                quickActionsSection
             }
-            .background(AppTheme.background)
-            .navigationTitle("NurseryConnect")
-            .navigationBarTitleDisplayMode(.inline)
-            .task {
-                SampleData.seedIfNeeded(context: context, profiles: profiles, entries: entries)
-                animateContent = true
-            }
+            .padding()
+            .opacity(animateContent ? 1 : 0)
+            .offset(y: animateContent ? 0 : 16)
+            .animation(.easeOut(duration: 0.45), value: animateContent)
+        }
+        .background(AppTheme.background)
+        .navigationTitle("NurseryConnect")
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            SampleData.seedIfNeeded(context: context, profiles: profiles, entries: entries)
+            animateContent = true
         }
     }
 
