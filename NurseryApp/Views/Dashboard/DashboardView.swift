@@ -106,6 +106,7 @@ struct DashboardView: View {
                     HStack(spacing: 10) {
                         smallBadge("Diary Updates")
                         smallBadge("Profile Ready")
+                        smallBadge("Health Notes")
                     }
                 } else {
                     Text("No child profile available")
@@ -137,6 +138,8 @@ struct DashboardView: View {
                 subtitle: latestDiaryCountText,
                 systemImage: "book.closed"
             )
+
+            DiarySummaryChartView(entries: entries)
 
             if let latestEntry {
                 SummaryCard(
@@ -184,6 +187,18 @@ struct DashboardView: View {
                     subtitle: "Profile & consent",
                     systemImage: "person.crop.circle.badge.checkmark",
                     accessibilityID: "profileButton"
+                )
+            }
+            .buttonStyle(.plain)
+
+            NavigationLink {
+                MedicationListView()
+            } label: {
+                PrimaryActionCard(
+                    title: "Medication Notes",
+                    subtitle: "Health notes and medicine reminders",
+                    systemImage: "cross.case.fill",
+                    accessibilityID: "medicationButton"
                 )
             }
             .buttonStyle(.plain)

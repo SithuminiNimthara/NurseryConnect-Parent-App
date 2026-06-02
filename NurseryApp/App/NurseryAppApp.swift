@@ -2,10 +2,10 @@ import SwiftUI
 import SwiftData
 
 @main
-struct NurseryAppApp: App {
+struct NurseryAppApp: App {  
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            iPadDashboardView()
                 .tint(AppTheme.primary)
         }
         .modelContainer(for: [
@@ -13,7 +13,8 @@ struct NurseryAppApp: App {
             DiaryEntry.self,
             EmergencyContact.self,
             AuthorisedCollector.self,
-            ConsentSettings.self
+            ConsentSettings.self,
+            MedicationNote.self
         ])
     }
 }
