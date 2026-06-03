@@ -42,5 +42,7 @@ struct VisionCard<Content: View>: View {
         .padding(24)
         .frame(width: width, height: height, alignment: .topLeading)
         .glassBackgroundEffect()
+        .hoverEffect()
+        .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
     }
 }

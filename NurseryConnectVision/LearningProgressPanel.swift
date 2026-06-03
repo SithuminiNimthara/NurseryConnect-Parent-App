@@ -16,18 +16,33 @@ struct LearningProgressPanel: View {
     ]
 
     var body: some View {
-        VisionCard(title: "Learning Progress", icon: "chart.pie.fill", width: 520, height: 300) {
+        VisionCard(title: "Learning Progress", icon: "chart.bar.xaxis", width: 520, height: 320) {
             Chart(data) { item in
                 BarMark(
                     x: .value("Category", item.category),
-                    y: .value("Progress", item.value)
+                    y: .value("Progress", item.value),
+                    width: 40
                 )
+                .foregroundStyle(by: .value("Category", item.category))
+                .cornerRadius(8)
             }
-            .frame(height: 190)
+            .chartLegend(.hidden)
+            .frame(height: 180)
+            .padding(.top, 10)
 
-            Text("This week Olivia showed strong communication and creative learning progress.")
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Circle().fill(.purple).frame(width: 8, height: 8)
+                    Text("Top Insight:").bold()
+                    Text("Olivia’s vocabulary is expanding rapidly through group activities.")
+                }
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                
+                Text("Based on Early Years Foundation Stage (EYFS) 2024 standards.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.top, 10)
         }
     }
 }

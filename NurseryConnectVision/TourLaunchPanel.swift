@@ -5,24 +5,26 @@ struct TourLaunchPanel: View {
     let closeAction: () -> Void
 
     var body: some View {
-        VisionCard(title: "Immersive Nursery Tour", icon: "cube.transparent.fill", width: 520, height: 300) {
-            VStack(alignment: .leading, spacing: 18) {
-                Text("Explore Sunshine Room as a spatial nursery environment.")
-                    .font(.title3)
-
-                Text("Parents can view the reading corner, play area, meal area, and rest area using floating 3D panels.")
+        VisionCard(title: "Spatial Immersion", icon: "visionpro", width: 520, height: 300) {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Step into Olivia's World")
+                    .font(.system(size: 32, weight: .bold))
+                
+                Text("Experience the Sunshine Room as a realistic 3D environment. Interact with floating panels to see exactly how Olivia learns, plays, and rests.")
+                    .font(.body)
                     .foregroundStyle(.secondary)
 
+                Spacer()
+                
                 HStack(spacing: 16) {
-                    Button("Open Tour") {
-                        openAction()
+                    Button(action: openAction) {
+                        Text("Launch Immersive Tour")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
                     }
                     .buttonStyle(.borderedProminent)
-
-                    Button("Close Tour") {
-                        closeAction()
-                    }
-                    .buttonStyle(.bordered)
+                    .tint(.purple)
+                    .controlSize(.large)
                 }
             }
         }

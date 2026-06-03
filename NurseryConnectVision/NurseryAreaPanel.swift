@@ -1,34 +1,33 @@
 import SwiftUI
 
 struct NurseryAreaPanel: View {
-    let area: NurseryArea
+    let zone: NurseryZone
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: area.icon)
-                    .font(.title2)
-                    .foregroundStyle(.purple)
-
-                Text(area.rawValue)
-                    .font(.title3.bold())
-            }
-
-            Text(area.description)
-                .font(.caption)
+        VStack(spacing: 12) {
+            Image(systemName: zone.icon)
+                .font(.system(size: 40))
+                .foregroundStyle(zone.themeColor)
+            
+            Text(zone.rawValue)
+                .font(.title2.bold())
+            
+            Text(zone.summary)
+                .font(.title3)
                 .foregroundStyle(.secondary)
-
-            Divider()
-
-            Text("Safety Note")
+                .multilineTextAlignment(.center)
+            
+            Text("Tap to explore")
                 .font(.headline)
-
-            Text(area.safetyNote)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.purple)
+                .padding(.top, 8)
         }
-        .padding(20)
-        .frame(width: 280, height: 210)
+        .padding(32)
+        .frame(width: 350, height: 280)
         .glassBackgroundEffect()
+        .overlay(
+            RoundedRectangle(cornerRadius: 32)
+                .stroke(zone.themeColor.opacity(0.3), lineWidth: 2)
+        )
     }
 }

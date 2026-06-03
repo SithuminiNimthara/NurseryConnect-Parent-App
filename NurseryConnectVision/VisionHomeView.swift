@@ -7,16 +7,17 @@ struct VisionHomeView: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
 
     var body: some View {
-        VStack(spacing: 28) {
+        VStack(spacing: 32) {
             header
+                .padding(.bottom, 12)
 
-            HStack(spacing: 28) {
+            HStack(spacing: 32) {
                 ChildProfilePanel()
                 MedicationPanel()
                 DiaryPanel()
             }
 
-            HStack(spacing: 28) {
+            HStack(spacing: 32) {
                 LearningProgressPanel()
                 TourLaunchPanel(
                     openAction: openTour,
@@ -24,7 +25,7 @@ struct VisionHomeView: View {
                 )
             }
         }
-        .padding(40)
+        .padding(60)
         .background {
             LinearGradient(
                 colors: [
@@ -40,20 +41,33 @@ struct VisionHomeView: View {
 
     private var header: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 12) {
                 Text("NurseryConnect Vision")
-                    .font(.largeTitle.bold())
-
-                Text("Spatial parent dashboard for Olivia’s nursery day")
-                    .font(.title3)
+                    .font(.system(size: 56, weight: .black)) // More prominent
+                
+                Text("Spatial Parent Dashboard • Live Nursery Experience")
+                    .font(.title)
                     .foregroundStyle(.secondary)
+                    .fontWeight(.medium)
             }
 
             Spacer()
 
-            Image(systemName: "visionpro.fill")
-                .font(.system(size: 42))
-                .foregroundStyle(.purple)
+            if appModel.immersiveSpaceOpen {
+                Button(role: .destructive, action: closeTour) {
+                    Label("Close Tour", systemImage: "xmark.circle.fill")
+                        .padding()
+                }
+                .controlSize(.extraLarge)
+            } else {
+                Button(action: openTour) {
+                    Label("Enter Nursery Tour", systemImage: "visionpro")
+                        .padding()
+                }
+                .controlSize(.extraLarge)
+                .buttonStyle(.borderedProminent)
+                .tint(.purple)
+            }
         }
     }
 
